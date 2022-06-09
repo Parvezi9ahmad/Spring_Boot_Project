@@ -1,16 +1,15 @@
 package com.springboot.blog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Generated;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.engine.internal.Cascade;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+//@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 
