@@ -1,9 +1,12 @@
 package com.springboot.blog.exception;
 
 import com.springboot.blog.payload.ErrorDetails;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,10 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Date;
+import java.util.*;
 
 @ControllerAdvice
-public class GLobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GLobalExceptionHandler /*extends ResponseEntityExceptionHandler*/ {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
@@ -35,16 +38,33 @@ public class GLobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }*/
 
+/*
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
-                                                                         HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+        Map<String,String> errors=new HashMap<>();
 
-        ErrorDetails errorDetails = new ErrorDetails(new Date(),
-                "From HttpRequestMethodNotSupportedException in GEH - Method Not allowed", ex.getMessage());
+        ex.getBindingResult().getAllErrors().forEach((error)->
+        {
+            String fieldname = ((FieldError) error).getField();
+            String defaultMessage = error.getDefaultMessage();
+            errors.put(fieldname,defaultMessage);
+        }
+                );
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }*/
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, WebRequest webRequest){
+
+        Map<String,String> errors=new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error)->{
+            String fieldName = ((FieldError) error).getField();
+            String filedMessage = error.getDefaultMessage();
+            errors.put(fieldName,filedMessage);
+        });
+
+        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
-
-
 }
