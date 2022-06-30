@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostResponse {
     private List<PostDto> content;
     private int pageNo;
     private int pageSize;
     private long totalElements;
     private int totalPages;
-    private Boolean last;
-
+    private boolean last;
 }
